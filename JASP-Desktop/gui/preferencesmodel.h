@@ -27,6 +27,7 @@ class PreferencesModel : public QObject
 	Q_PROPERTY(bool			customThresholdScale	READ customThresholdScale		WRITE setCustomThresholdScale		NOTIFY customThresholdScaleChanged		)
 	Q_PROPERTY(int			thresholdScale			READ thresholdScale				WRITE setThresholdScale				NOTIFY thresholdScaleChanged			)
 	Q_PROPERTY(bool			devModRegenDESC			READ devModRegenDESC			WRITE setDevModRegenDESC			NOTIFY devModRegenDESCChanged			)
+	Q_PROPERTY(bool			logToFile				READ logToFile					WRITE setLogToFile					NOTIFY logToFileChanged					)
 
 
 public:
@@ -52,14 +53,13 @@ public:
 	bool		customThresholdScale()		const;
 	int			thresholdScale()			const;
 	bool		devModRegenDESC()			const;
+	bool		logToFile()					const;
+
 
 	void		missingValuesToStdVector(std::vector<std::string> & out) const;
 	void		zoomIn();
 	void		zoomOut();
 	void		zoomReset();
-
-
-
 
 public slots:
 	void setUiScale(double uiScale);
@@ -84,6 +84,8 @@ public slots:
 	void setCustomThresholdScale(bool customThresholdScale);
 	void setThresholdScale(int thresholdScale);
 	void setDevModRegenDESC(bool devModRegenDESC);
+	void setLogToFile(bool logToFile);
+
 
 signals:
 	void fixedDecimalsChanged(bool fixedDecimals);
@@ -107,9 +109,10 @@ signals:
 	void thresholdScaleChanged(int thresholdScale);
 	void devModRegenDESCChanged(bool devModRegenDESC);
 
+	void logToFileChanged(bool logToFile);
+
 private:
 	int _defaultPPI = 192;
-
 };
 
 #endif // PREFERENCESDIALOG_H
