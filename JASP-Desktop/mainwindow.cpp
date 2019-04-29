@@ -56,6 +56,7 @@
 #include "resultstesting/compareresults.h"
 #include "widgets/filemenu/filemenu.h"
 #include "gui/messageforwarder.h"
+#include "log.h"
 
 using namespace std;
 
@@ -93,6 +94,12 @@ QMap<int, QString> MainWindow::_columnTypeMap {
 MainWindow::MainWindow(QApplication * application) : QObject(application), _application(application)
 {
 	JASPTIMER_START(MainWindowConstructor);
+
+	Log::initRedirects();
+	Log::setLogFileName("/home/falafel/jasp.log");
+	Log::setDefaultDestination(logType::null);
+	Log::setLoggingToFile(true);
+
 
 	TempFiles::init(ProcessInfo::currentPID()); // needed here so that the LRNAM can be passed the session directory
 

@@ -1,74 +1,109 @@
 #define ENUM_DECLARATION_CPP
 #include "log.h"
-
-#include <iostream>
-
-#include "boost/iostreams/stream.hpp"
-#include "boost/iostreams/device/null.hpp"
-#include "boost/nowide/fstream.hpp"
-
-typedef boost::nowide::ofstream bofstream; //Use this to work around problems on Windows with utf8 conversion
+#include "boost/nowide/cstdio.hpp"
 
 //Not defined in class because I want the header to be as light as possible:
 static logType		_default		= logType::cout;
 static logType		_where			= logType::cout;
 static std::string	_logFilePath	= "";
-static bofstream	_logFile		= bofstream();
 static logError		_logError		= logError::noProblem;
+static int			_stdoutfd		= -1;
 
-std::ostream & Log::log()
-{
-	switch(_where)
-	{
-	case logType::cout:		return std::cout;
-	case logType::null:
-	{
-		static boost::iostreams::stream<boost::iostreams::null_sink> nullstream((boost::iostreams::null_sink())); //https://stackoverflow.com/questions/8243743/is-there-a-null-stdostream-implementation-in-c-or-libraries
-		return nullstream;
-	}
-	case logType::file:		return _logFile;
-	};
-}
-
+static const char*	_nullStream =
+#ifdef WIN32
+	"nul:";
+#else
+	"/dev/null";
+#endif
 
 void Log::setDefaultDestination(logType newDestination)
 {
-	if(newDestination != logType::file) //It doesnt make any sense to have the default non-file logType be file...
-		_default = newDestination;
+	if(newDestination == logType::file) //It doesnt make any sense to have the default non-file logType be file...
+		newDestination = logType::cout;
+
+	if(_default == newDestination)
+		return;
+
+	bool setNewDefaultToWhere = _where == _default;
+
+	_default = newDestination;
+
+	if(setNewDefaultToWhere)
+		redirectStdOut();
 }
 
 void Log::setLoggingToFile(bool logToFile)
 {
-	_where = logToFile ? logType::file : _default;
+	logType where = logToFile ? logType::file : _default;
 
-	if(logToFile)				openLogFile();
-	else if(_logFile.is_open())	_logFile.close();
+	if(where == _where)
+		return;
+
+	_where = where;
+
+	redirectStdOut();
 }
 
 void Log::setLogFileName(const std::string & filePath)
 {
+	if(_logFilePath == filePath)
+		return;
+
 	_logFilePath = filePath;
 
 	if(_where == logType::file)
-		openLogFile();
+		redirectStdOut();
 }
 
-void Log::openLogFile()
+void Log::initRedirects()
 {
-	if(_logFilePath == "")
-	{
-		_logError = logError::filePathNotSet;
-		_where    = _default;
+	if(_stdoutfd != -1)
 		return;
-	}
 
-	_logFile.open(_logFilePath, std::ios_base::app | std::ios_base::out);
+	_stdoutfd = dup(fileno(stdout)); //Probably useless on Windows. //Also maybe should close this after closing program? dup opens new FILE*
 
-	if(_logFile.fail())
+#ifdef WIN32
+	_dup2(fileno(stdout), fileno(stderr));
+#else
+	dup2(fileno(stdout), fileno(stderr));
+#endif
+}
+
+void Log::redirectStdOut()
+{
+
+
+	switch(_where)
 	{
-		_logError	= logError::fileNotOpen;
-		_where		= _default;
-		return;
+	case logType::null:
+		if (!freopen(_nullStream, "a", stdout))
+			throw std::runtime_error("Could not redirect stdout to null");
+
+		break;
+
+	case logType::cout:
+		dup2(_stdoutfd, fileno(stdout));
+		break;
+
+	case logType::file:
+	{
+		if(_logFilePath == "")
+		{
+			_logError = logError::filePathNotSet;
+			_where    = _default;
+			redirectStdOut();
+			return;
+		}
+
+		if(!freopen(_logFilePath.c_str(), "wa", stdout))
+		{
+			_logError	= logError::fileNotOpen;
+			_where		= _default;
+			redirectStdOut();
+			return;
+		}
+		break;
+	};
 	}
 
 	_logError = logError::noProblem;
