@@ -2,10 +2,18 @@
 #include "log.h"
 #include "boost/nowide/cstdio.hpp"
 #include <chrono>
+#ifdef WIN32
+#include <io.h>
+#endif
 
 //Not defined in class because I want the header to be as light as possible:
-static logType		_default		= logType::cout;
-static logType		_where			= logType::cout;
+static logType		_default		=
+#ifdef JASP_DEBUG
+	logType::cout;
+#else
+	logType::null;
+#endif
+static logType		_where			= _default;
 static std::string	_logFilePath	= "";
 static logError		_logError		= logError::noProblem;
 static int			_stdoutfd		= -1;
@@ -61,19 +69,17 @@ void Log::initRedirects()
 	if(_stdoutfd != -1)
 		return;
 
-	_stdoutfd = dup(fileno(stdout)); //Probably useless on Windows. //Also maybe should close this after closing program? dup opens new FILE*
-
 #ifdef WIN32
+	_stdoutfd = _dup(fileno(stdout)); //Also maybe should close this after closing program? dup opens new FILE*
 	_dup2(fileno(stdout), fileno(stderr));
 #else
+	_stdoutfd = dup(fileno(stdout)); //Also maybe should close this after closing program? dup opens new FILE*
 	dup2(fileno(stdout), fileno(stderr));
 #endif
 }
 
 void Log::redirectStdOut()
 {
-
-
 	switch(_where)
 	{
 	case logType::null:
@@ -83,7 +89,12 @@ void Log::redirectStdOut()
 		break;
 
 	case logType::cout:
-		dup2(_stdoutfd, fileno(stdout));
+#ifdef WIN32
+		_dup2(_stdoutfd, fileno(stdout));
+#else
+		 dup2(_stdoutfd, fileno(stdout));
+#endif
+
 		break;
 
 	case logType::file:
