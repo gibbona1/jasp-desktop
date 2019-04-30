@@ -129,10 +129,10 @@ MainWindow::MainWindow(QApplication * application) : QObject(application), _appl
 
 	makeConnections();
 
-	qmlRegisterType<DataSetView>		("JASP", 1, 0, "DataSetView");
-	qmlRegisterType<AnalysisForm>		("JASP", 1, 0, "AnalysisForm");
-	qmlRegisterType<JASPDoubleValidator> ("JASP", 1, 0, "JASPDoubleValidator");
-	qmlRegisterType<ResultsJsInterface>	("JASP", 1, 0, "ResultsJsInterface");
+	qmlRegisterType<DataSetView>			("JASP", 1, 0, "DataSetView");
+	qmlRegisterType<AnalysisForm>			("JASP", 1, 0, "AnalysisForm");
+	qmlRegisterType<JASPDoubleValidator>	("JASP", 1, 0, "JASPDoubleValidator");
+	qmlRegisterType<ResultsJsInterface>		("JASP", 1, 0, "ResultsJsInterface");
 
 	loadQML();
 
@@ -330,7 +330,6 @@ void MainWindow::initLog()
 {
 	Log::initRedirects();
 	Log::setLogFileName((AppDirs::logDir() + "JASP "  + getSortableTimestamp() + ".log").toStdString());
-	Log::setDefaultDestination(logType::null);
 	Log::setLoggingToFile(_preferences->logToFile());
 	logRemoveSuperfluousFiles(_preferences->logFilesMax());
 

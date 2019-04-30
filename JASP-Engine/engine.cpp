@@ -28,8 +28,8 @@
 #include <csignal>
 
 #include "rbridge.h"
-
 #include "timers.h"
+#include "log.h"
 
 void SendFunctionForJaspresults(const char * msg) { Engine::theEngine()->sendString(msg); }
 bool PollMessagesFunctionForJaspResults()
@@ -74,6 +74,8 @@ Engine::Engine(int slaveNo, unsigned long parentPID) : _slaveNo(slaveNo), _paren
 	rbridge_setColumnDataAsNominalTextSource(	boost::bind(&Engine::setColumnDataAsNominalText,	this, _1, _2));
 
 	rbridge_setGetDataSetRowCountSource( boost::bind(&Engine::dataSetRowCount, this));
+
+	Log::initRedirects();
 
 	//usleep(10000000);
 

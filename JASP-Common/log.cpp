@@ -6,19 +6,19 @@
 #include <io.h>
 #endif
 
-//Not defined in class because I want the header to be as light as possible:
-static logType		_default		=
+logType		Log::_where			= logType::cout;
+std::string	Log::_logFilePath	= "";
+logError	Log::_logError		= logError::noProblem;
+int			Log::_stdoutfd		= -1;
+
+logType		Log::_default		=
 #ifdef JASP_DEBUG
 	logType::cout;
 #else
 	logType::null;
 #endif
-static logType		_where			= _default;
-static std::string	_logFilePath	= "";
-static logError		_logError		= logError::noProblem;
-static int			_stdoutfd		= -1;
 
-static const char*	_nullStream =
+const char*	Log::_nullStream =
 #ifdef WIN32
 	"nul:";
 #else
@@ -66,7 +66,7 @@ void Log::setLogFileName(const std::string & filePath)
 
 void Log::initRedirects()
 {
-	if(_stdoutfd != -1)
+	if(_stdoutfd != -1) //Because then it is inited?
 		return;
 
 #ifdef WIN32
@@ -76,6 +76,8 @@ void Log::initRedirects()
 	_stdoutfd = dup(fileno(stdout)); //Also maybe should close this after closing program? dup opens new FILE*
 	dup2(fileno(stdout), fileno(stderr));
 #endif
+
+	_where = _default;
 }
 
 void Log::redirectStdOut()

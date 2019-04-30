@@ -18,6 +18,14 @@ public:
 private:
 				Log() { }
 	static void redirectStdOut();
+
+	static logType		_default;
+	static logType		_where;
+	static std::string	_logFilePath;
+	static logError		_logError;
+	static int			_stdoutfd;
+
+	static const char*	_nullStream;
 };
 
 #endif // LOG_H
