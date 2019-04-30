@@ -1,6 +1,7 @@
 #define ENUM_DECLARATION_CPP
 #include "log.h"
 #include "boost/nowide/cstdio.hpp"
+#include <chrono>
 
 //Not defined in class because I want the header to be as light as possible:
 static logType		_default		= logType::cout;
@@ -95,7 +96,7 @@ void Log::redirectStdOut()
 			return;
 		}
 
-		if(!freopen(_logFilePath.c_str(), "wa", stdout))
+		if(!freopen(_logFilePath.c_str(), "a", stdout))
 		{
 			_logError	= logError::fileNotOpen;
 			_where		= _default;

@@ -95,13 +95,11 @@ MainWindow::MainWindow(QApplication * application) : QObject(application), _appl
 {
 	JASPTIMER_START(MainWindowConstructor);
 
-	Log::initRedirects();
-	Log::setLogFileName("/Users/jorisgoosen/jasp.log");
-	Log::setDefaultDestination(logType::null);
-	Log::setLoggingToFile(true);
-
-
 	TempFiles::init(ProcessInfo::currentPID()); // needed here so that the LRNAM can be passed the session directory
+
+
+	_preferences			= new PreferencesModel(this);
+	initLog();
 
 	_resultsJsInterface		= new ResultsJsInterface();
 	_package				= new DataSetPackage();
@@ -122,12 +120,12 @@ MainWindow::MainWindow(QApplication * application) : QObject(application), _appl
 	_fileMenu				= new FileMenu(this);
 	_helpModel				= new HelpModel(this);
 	_aboutModel				= new AboutModel(this);
-	_preferences			= new PreferencesModel(this);
+
 	_resultMenuModel		= new ResultMenuModel(this);
 
 	new MessageForwarder(this); //We do not need to store this
 
-	StartOnlineDataManager();
+	startOnlineDataManager();
 
 	makeConnections();
 
@@ -156,7 +154,7 @@ MainWindow::~MainWindow()
 	}
 }
 
-void MainWindow::StartOnlineDataManager()
+void MainWindow::startOnlineDataManager()
 {
 	_loader.moveToThread(&_loaderThread);
 	_loaderThread.start();
@@ -326,6 +324,36 @@ void MainWindow::loadQML()
 	_qml->load(QUrl("qrc:///components/JASP/Widgets/HelpWindow.qml"));
 	_qml->load(QUrl("qrc:///components/JASP/Widgets/AboutWindow.qml"));
 	_qml->load(QUrl("qrc:///components/JASP/Widgets/MainWindow.qml"));
+}
+
+void MainWindow::initLog()
+{
+	Log::initRedirects();
+	Log::setLogFileName((AppDirs::logDir() + "JASP "  + getSortableTimestamp() + ".log").toStdString());
+	Log::setDefaultDestination(logType::null);
+	Log::setLoggingToFile(_preferences->logToFile());
+	logRemoveSuperfluousFiles(_preferences->logFilesMax());
+
+	connect(_preferences, &PreferencesModel::logToFileChanged,		this, &MainWindow::logToFileChanged); //Not connecting preferences directly to keep Log Qt-free (for Engine/R-Interface)
+	connect(_preferences, &PreferencesModel::logFilesMaxChanged,	this, &MainWindow::logRemoveSuperfluousFiles);
+}
+
+void MainWindow::logToFileChanged(bool logToFile)
+{
+	Log::setLoggingToFile(logToFile);
+}
+
+void MainWindow::logRemoveSuperfluousFiles(int maxFilesToKeep)
+{
+	QDir logFileDir(AppDirs::logDir());
+
+	QFileInfoList logs = logFileDir.entryInfoList({"*.log"}, QDir::Filter::Files, QDir::SortFlag::Name | QDir::SortFlag::Reversed);
+
+	if(logs.size() < maxFilesToKeep)
+		return;
+
+	for(int i=logs.size() - 1; i >= maxFilesToKeep; i--)
+		logFileDir.remove(logs[i].fileName());
 }
 
 void MainWindow::open(QString filepath)

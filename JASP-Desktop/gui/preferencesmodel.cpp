@@ -103,6 +103,7 @@ bool	PreferencesModel::customThresholdScale()	const { return Settings::value(Set
 int		PreferencesModel::thresholdScale()			const { return Settings::value(Settings::THRESHOLD_SCALE							).toInt();					}
 bool	PreferencesModel::devModRegenDESC()			const { return Settings::value(Settings::DEVELOPER_MODE_REGENERATE_DESCRIPTION_ETC	).toBool();					}
 bool	PreferencesModel::logToFile()				const {	return Settings::value(Settings::LOG_TO_FILE								).toBool();					}
+int		PreferencesModel::logFilesMax()				const {	return Settings::value(Settings::LOG_FILES_MAX								).toInt();					}
 
 QStringList PreferencesModel::missingValues()		const
 {;
@@ -360,4 +361,13 @@ void PreferencesModel::setLogToFile(bool newLogToFile)
 
 	Settings::setValue(Settings::LOG_TO_FILE, newLogToFile);
 	emit logToFileChanged(newLogToFile);
+}
+
+void PreferencesModel::setLogFilesMax(int newLogFilesMax)
+{
+	if (logFilesMax() == newLogFilesMax)
+		return;
+
+	Settings::setValue(Settings::LOG_FILES_MAX, newLogFilesMax);
+	emit logFilesMaxChanged(newLogFilesMax);
 }

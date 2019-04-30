@@ -15,7 +15,6 @@ public:
 	static void setLogFileName(const std::string & filePath);
 	static void initRedirects();
 
-
 private:
 				Log() { }
 	static void redirectStdOut();
