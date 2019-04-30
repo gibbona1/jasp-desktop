@@ -80,7 +80,7 @@ void QMLListViewDraggable::itemsDroppedHandler(QVariant vindexes, QVariant vdrop
 	
 	if (!dropModel)
 	{
-		qDebug() << "No drop element!";
+		std::cout  << "No drop element!" << std::endl;
 		return;
 	}
 	
@@ -146,7 +146,7 @@ void QMLListViewDraggable::_moveItems(QList<int> &indexes, ListModelDraggable* t
 	}
 	else
 	{
-		qDebug() << (!targetModel ? "no dropModel" : "no indexes");
+		std::cout  << (!targetModel ? "no dropModel" : "no indexes") << std::endl;
 	}
 }
 

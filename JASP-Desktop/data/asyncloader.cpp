@@ -28,7 +28,7 @@
 #include "utilities/qutils.h"
 #include "utils.h"
 #include "osf/onlinedatamanager.h"
-#include <QDebug>
+
 
 using namespace std;
 
@@ -182,7 +182,7 @@ void AsyncLoader::loadPackage(QString id)
 
 		try
 		{
-			qDebug() << "loadPackage";
+			std::cout  << "AsyncLoader::loadPackage(" << id.toStdString() << ")" << std::endl;
 			string path = fq(_currentEvent->path());
 			string extension = "";
 

@@ -18,7 +18,7 @@
 
 #include "analysisform.h"
 
-#include <QDebug>
+
 #include <boost/bind.hpp>
 
 #include "options/bound.h"
@@ -26,7 +26,7 @@
 
 #include <QQmlProperty>
 #include <QQmlContext>
-#include <QDebug>
+
 #include "widgets/boundqmlcheckbox.h"
 #include "widgets/boundqmlcombobox.h"
 #include "widgets/boundqmlslider.h"
@@ -283,7 +283,7 @@ void AnalysisForm::_parseQML()
 	_setUpItems();
 
 	if (!_errorMessagesItem)
-		qDebug() << "No errorMessages Item found!!!";
+		std::cout  << "No errorMessages Item found!" << std::endl;
 
 	_setErrorMessages();
 }

@@ -23,7 +23,7 @@
 #include "boundqmlcheckbox.h"
 #include "boundqmltextinput.h"
 
-#include <QDebug>
+
 #include <QQuickItem>
 
 ListModelExtraControls::ListModelExtraControls(ListModelAssignedInterface* parent, const QString& colName, const QVector<QMap<QString, QVariant> >& controlColumns) 

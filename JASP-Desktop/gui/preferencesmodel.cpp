@@ -1,6 +1,6 @@
 #include "preferencesmodel.h"
 #include "utils.h"
-#include <QDebug>
+
 #include "utilities/settings.h"
 #include "gui/messageforwarder.h"
 

@@ -51,7 +51,7 @@ bool Application::notify(QObject *receiver, QEvent *event)
 {
 	try
 	{
-		//qDebug() << "Application::notify: " << receiver->objectName() << " with event: " << event << "\n";
+		//std::cout  << "Application::notify: " << receiver->objectName() << " with event: " << event  << std::endl;
 		return QApplication::notify(receiver, event);
 	}
 	catch (std::exception &e)

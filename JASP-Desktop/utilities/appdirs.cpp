@@ -20,7 +20,7 @@
 
 #include <QApplication>
 #include <QDir>
-#include <QDebug>
+
 
 #ifdef _WIN32
 #include <windows.h>

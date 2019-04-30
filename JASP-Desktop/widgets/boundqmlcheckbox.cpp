@@ -49,7 +49,7 @@ void BoundQMLCheckBox::bindTo(Option *option)
 		setItemProperty("checked", _checked);
 	}
 	else
-		qDebug() << "could not bind to OptionBoolean in BoundQuickCheckBox.cpp";
+		std::cout  << "could not bind to OptionBoolean in BoundQuickCheckBox.cpp" << std::endl;
 }
 
 bool BoundQMLCheckBox::isOptionValid(Option* option)

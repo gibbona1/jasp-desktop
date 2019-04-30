@@ -16,7 +16,7 @@
 // <http://www.gnu.org/licenses/>.
 //
 
-#include <QDebug>
+
 #include <QDir>
 
 #include "utilities/application.h"

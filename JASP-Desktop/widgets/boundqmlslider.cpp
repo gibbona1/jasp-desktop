@@ -87,7 +87,7 @@ void BoundQMLSlider::sliderMovedSlot()
 
 void BoundQMLSlider::_changeOptionHandler()
 {
-	qDebug() << "Slider set new value: " << _number;
+	std::cout  << "Slider set new value: " << _number << std::endl;
 	_boundTo->setValue(_number);
 	_changing = false;
 }

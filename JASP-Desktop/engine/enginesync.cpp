@@ -22,7 +22,7 @@
 #include <QFile>
 #include <QFileInfo>
 #include <QDir>
-#include <QDebug>
+
 
 #include <boost/interprocess/shared_memory_object.hpp>
 #include <boost/interprocess/mapped_region.hpp>
@@ -110,7 +110,7 @@ void EngineSync::start(int ppi)
 	}
 	catch (interprocess_exception e)
 	{
-		qDebug() << "interprocess exception! " << e.what() << "\n";
+		std::cout  << "interprocess exception! " << e.what() <<  std::endl;
 		throw e;
 	}
 

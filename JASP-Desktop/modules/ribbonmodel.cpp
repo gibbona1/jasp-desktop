@@ -16,7 +16,7 @@
 // <http://www.gnu.org/licenses/>.
 //
 
-#include <QDebug>
+
 #include "ribbonmodel.h"
 #include "dirs.h"
 

@@ -879,7 +879,7 @@ void Column::setValue(int row, int value)
 
 	if (itr == _blocks.end())
 	{
-		//qDebug() << "Column::setValue(), bad rowIndex";
+		//std::cout  << "Column::setValue(), bad rowIndex" << std::endl;
 		return;
 	}
 
@@ -896,7 +896,7 @@ void Column::setValue(int row, double value)
 
 	if (itr == _blocks.end())
 	{
-		//qDebug() << "Column::setValue(), bad rowIndex";
+		//std::cout  << "Column::setValue(), bad rowIndex" << std::endl;
 		return;
 	}
 
@@ -1324,7 +1324,7 @@ double& Column::DoublesStruct::operator [](int rowIndex)
 
 	if (itr == parent->_blocks.end())
 	{
-		//qDebug() << "Column::Ints[], bad rowIndex";
+		//std::cout  << "Column::Ints[], bad rowIndex" << std::endl;
 	}
 
 	int blockId = itr->first;

@@ -21,7 +21,7 @@
 #include <QFileInfo>
 #include <QStandardPaths>
 #include <QDir>
-#include <QDebug>
+#include <iostream>
 #include "utilities/settings.h"
 
 ComputerFileSystem::ComputerFileSystem(QObject *parent)
@@ -65,7 +65,7 @@ QStringList ComputerFileSystem::readRecents()
 		// oddly, under linux, loading a setting value of type StringList which has
 		// only a single string in it, gives you just a string. we QVariant::String is acceptable too
 
-		qDebug() << "FSBrowserModelRecentFolders::refresh();  setting 'recentFolders' is not a QStringList";
+		std::cout  << "FSBrowserModelRecentFolders::refresh();  setting 'recentFolders' is not a QStringList" << std::endl;
 	}
 
 	QStringList recents = v.toStringList();

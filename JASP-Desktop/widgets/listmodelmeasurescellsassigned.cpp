@@ -20,7 +20,7 @@
 #include "listmodelrepeatedmeasuresfactors.h"
 #include "boundqmllistviewmeasurescells.h"
 
-#include <QDebug>
+
 
 using namespace std;
 
@@ -173,7 +173,7 @@ QVariant ListModelMeasuresCellsAssigned::data(const QModelIndex &index, int role
 {
 	if ( ! index.isValid())
 	{
-		qDebug() << "Data invalid!";
+		std::cout  << "ListModelMeasuresCellsAssigned::data: Data invalid!" << std::endl;
 		return QVariant();
 	}
 

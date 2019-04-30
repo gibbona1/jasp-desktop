@@ -76,7 +76,7 @@ void BoundQMLTableView::bindTo(Option *option)
 
 	}
 	else
-		qDebug() << "could not bind to OptionBoolean in BoundQuickCheckBox.cpp";
+		std::cout  << "could not bind to OptionBoolean in BoundQuickCheckBox.cpp" << std::endl;
 }
 
 

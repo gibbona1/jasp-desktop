@@ -22,7 +22,7 @@
 #include "analysis/jaspdoublevalidator.h"
 
 #include <QDir>
-#include <QDebug>
+
 #include <QFile>
 #include <QFileInfo>
 #include <QShortcut>
@@ -96,7 +96,7 @@ MainWindow::MainWindow(QApplication * application) : QObject(application), _appl
 	JASPTIMER_START(MainWindowConstructor);
 
 	Log::initRedirects();
-	Log::setLogFileName("/home/falafel/jasp.log");
+	Log::setLogFileName("/Users/jorisgoosen/jasp.log");
 	Log::setDefaultDestination(logType::null);
 	Log::setLoggingToFile(true);
 

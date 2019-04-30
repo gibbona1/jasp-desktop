@@ -27,7 +27,7 @@
 #include "listmodelextracontrols.h"
 #include "listmodeltermsassigned.h"
 #include "listmodelinteractionassigned.h"
-
+#include <iostream>
 #include <QQmlProperty>
 
 using namespace std;
@@ -60,7 +60,7 @@ void BoundQMLListViewTerms::bindTo(Option *option)
 		_optionsTable = dynamic_cast<OptionsTable *>(option);
 		if (!_optionsTable)
 		{
-			qDebug() << "Options for list view " << name() << " is not of type Table!";
+			std::cout  << "Options for list view " << name().toStdString() << " is not of type Table!" << std::endl;
 			return;
 		}
 		
@@ -92,7 +92,7 @@ void BoundQMLListViewTerms::bindTo(Option *option)
 		if (_optionVariables)
 			_termsModel->initTerms(_optionVariables->value());
 		else
-			qDebug() << "Options for list view " << name() << " is not of type Variables!";
+			std::cout  << "Options for list view " << name().toStdString() << " is not of type Variables!" << std::endl;
 	}
 }
 
@@ -202,7 +202,7 @@ void BoundQMLListViewTerms::modelChangedHandler()
 					allOptions.push_back(row);
 				}
 				else
-					qDebug() << "An option is not of type OptionTerm!!";
+					std::cout  << "An option is not of type OptionTerm!!" << std::endl;
 			}
 			
 			_optionsTable->setValue(allOptions);
@@ -228,7 +228,7 @@ void BoundQMLListViewTerms::_fillOptionsMap(QMap<std::string, Options*>& options
 				colName = tempTerm.asString();
 			}
 			else
-				qDebug() << "An option is not of type OptionTerm!!!";
+				std::cout  << "An option is not of type OptionTerm!" << std::endl;
 		}
 		else
 		{
@@ -236,7 +236,7 @@ void BoundQMLListViewTerms::_fillOptionsMap(QMap<std::string, Options*>& options
 			if (variableOption)
 				colName = variableOption->variable();
 			else
-				qDebug() << "An option os not of type OptionVariable!!!";
+				std::cout  << "An option os not of type OptionVariable!" << std::endl;
 		}
 		optionsMap[colName] = options;
 	}
@@ -262,7 +262,7 @@ void BoundQMLListViewTerms::bindExtraControlOptions()
 		ListModelExtraControls* extraControlModel = _termsModel->getExtraControlModel(termQStr);
 		if (!extraControlModel)
 		{
-			std::cout << "connectExtraControlOptions: Could not find " << termStr << " in rows!!!" << std::flush;
+			std::cout << "connectExtraControlOptions: Could not find " << termStr << " in rows!" << std::endl;
 			continue;
 		}
 		
