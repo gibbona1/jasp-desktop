@@ -35,6 +35,7 @@
 #include "tempfiles.h"
 #include "timers.h"
 #include "utilities/appdirs.h"
+#include "log.h"
 
 using namespace boost::interprocess;
 
@@ -101,6 +102,7 @@ void EngineSync::start(int ppi)
 			connect(_engines[i],	&EngineRepresentation::moduleInstallationSucceeded,		this,			&EngineSync::moduleInstallationSucceeded								);
 			connect(_engines[i],	&EngineRepresentation::moduleUnloadingFinished,			this,			&EngineSync::moduleUnloadingFinishedHandler								);
 			connect(_engines[i],	&EngineRepresentation::moduleUninstallingFinished,		this,			&EngineSync::moduleUninstallingFinished									);
+			connect(_engines[i],	&EngineRepresentation::logCfgReplyReceived,				this,			&EngineSync::logCfgReplyReceived										);
 			connect(this,			&EngineSync::ppiChanged,								this,			&EngineSync::refreshAllPlots,					Qt::QueuedConnection	);
 			connect(this,			&EngineSync::ppiChanged,								_engines[i],	&EngineRepresentation::ppiChanged										);
 			connect(this,			&EngineSync::imageBackgroundChanged,					_engines[i],	&EngineRepresentation::imageBackgroundChanged							);
@@ -141,6 +143,7 @@ void EngineSync::restartEngines()
 	}
 
 	setModuleWideCastVars(_dynamicModules->getJsonForReloadingActiveModules());
+	logCfgRequest();
 
 	_engineStarted = true;
 }
@@ -150,6 +153,7 @@ void EngineSync::process()
 	for (auto engine : _engines)
 		engine->process();
 	
+	processLogCfgRequests();
 	processScriptQueue();
 	processDynamicModules();
 	ProcessAnalysisRequests();
@@ -640,4 +644,24 @@ void EngineSync::refreshAllPlots(int)
 			inProgress.insert(engine->analysisInProgress());
 
 	emit refreshAllPlotsExcept(inProgress);
+}
+
+
+void EngineSync::logCfgRequest()
+{
+	for(EngineRepresentation * e : _engines)
+		_logCfgRequested.insert(e->channelNumber());
+}
+
+void EngineSync::logCfgReplyReceived(size_t channelNr)
+{
+	_logCfgRequested.erase(channelNr);
+}
+
+void EngineSync::processLogCfgRequests()
+{
+	for(size_t channelNr : _logCfgRequested)
+		if(_engines[channelNr]->isIdle())
+			_engines[channelNr]->sendLogCfg();
+
 }

@@ -1,6 +1,7 @@
 #include "enginerepresentation.h"
 #include "utilities/settings.h"
 #include "gui/messageforwarder.h"
+#include "log.h"
 
 EngineRepresentation::EngineRepresentation(IPCChannel * channel, QProcess * slaveProcess, QObject * parent)
 	: QObject(parent), _channel(channel)
@@ -98,6 +99,7 @@ void EngineRepresentation::process()
 		case engineState::resuming:			processEngineResumedReply();		break;
 		case engineState::stopped:			processEngineStoppedReply();		break;
 		case engineState::moduleRequest:	processModuleRequestReply(json);	break;
+		case engineState::logCfg:			processLogCfgReply();				break;
 		default:							throw std::logic_error("If you define new engineStates you should add them to the switch in EngineRepresentation::process()!");
 		}
 	}
@@ -429,7 +431,10 @@ void EngineRepresentation::processEngineResumedReply()
 	if(_engineState != engineState::resuming && _engineState != engineState::initializing)
 		throw std::runtime_error("Received an unexpected engine resumed reply!");
 
-	_engineState = engineState::idle;
+	if(_engineState == engineState::initializing)
+		sendLogInit();
+	else
+		_engineState = engineState::idle;
 }
 
 void EngineRepresentation::processEngineStoppedReply()
@@ -499,4 +504,43 @@ void  EngineRepresentation::rerunRunningAnalysis()
 {
 	if(_engineState == engineState::analysis && _analysisInProgress != nullptr)
 		_analysisInProgress->refresh();
+}
+
+void EngineRepresentation::sendLogInit()
+{
+#ifdef JASP_DEBUG
+	std::cout << "EngineRepresentation::sendLogInit()" << std::endl;
+#endif
+
+	if(_engineState != engineState::initializing)
+		throw std::runtime_error("EngineRepresentation::sendLogInit() expects to be run from an engine that is intializing!");
+
+	_engineState		= engineState::logCfg;
+	Json::Value msg		= Log::createLogCfgMsg();
+	msg["typeRequest"]	= engineStateToString(_engineState);
+
+	sendString(msg.toStyledString());
+}
+
+void EngineRepresentation::sendLogCfg()
+{
+#ifdef JASP_DEBUG
+	std::cout << "EngineRepresentation::sendLogCfg()" << std::endl;
+#endif
+
+	if(_engineState != engineState::idle)
+		throw std::runtime_error("EngineRepresentation::sendLogCfg() expects to be run from an idle engine.");
+
+	_engineState		= engineState::logCfg;
+	Json::Value msg		= Log::createLogCfgMsg();
+	msg["typeRequest"]	= engineStateToString(_engineState);
+
+	sendString(msg.toStyledString());
+}
+
+void EngineRepresentation::processLogCfgReply()
+{
+	_engineState = engineState::idle;
+
+	emit logCfgReplyReceived(channelNumber());
 }

@@ -25,7 +25,14 @@ using namespace std;
 using namespace boost;
 using namespace boost::posix_time;
 
-IPCChannel::IPCChannel(std::string name, int channelNumber, bool isSlave) : _baseName(name + "#" + std::to_string(channelNumber)), _nameControl(name + "_control"), _nameMtS(name + "_MasterToSlave"), _nameStM(name + "_SlaveToMaster"), _channelNumber(channelNumber), _isSlave(isSlave)
+IPCChannel::IPCChannel(std::string name, size_t channelNumber, bool isSlave)
+	:
+	  _baseName(		name + "#" + std::to_string(channelNumber)	),
+	  _nameControl(		name + "_control"							),
+	  _nameMtS(			name + "_MasterToSlave"						),
+	  _nameStM(			name + "_SlaveToMaster"						),
+	  _channelNumber(	channelNumber								),
+	  _isSlave(			isSlave										)
 {
 	_memoryControl			= new interprocess::managed_shared_memory(interprocess::open_or_create, _baseName.c_str(), 4096);
 
@@ -57,17 +64,15 @@ IPCChannel::IPCChannel(std::string name, int channelNumber, bool isSlave) : _bas
 	_dataOut	= _memoryOut->find_or_construct<String>(_dataOutName.c_str())	(_memoryOut->get_segment_manager());
 
 #ifdef __APPLE__
-	_semaphoreIn  = sem_open(_mutexInName.c_str(), O_CREAT, S_IWUSR | S_IRGRP | S_IROTH, 0);
+	_semaphoreIn  = sem_open(_mutexInName.c_str(),  O_CREAT, S_IWUSR | S_IRGRP | S_IROTH, 0);
 	_semaphoreOut = sem_open(_mutexOutName.c_str(), O_CREAT, S_IWUSR | S_IRGRP | S_IROTH, 0);
 
 	if (isSlave == false)
 	{
 		// cleanse the semaphores; they don't seem to reliably initalise to zero.
 
-		while (sem_trywait(_semaphoreIn) == 0)
-			; // do nothing
-		while (sem_trywait(_semaphoreOut) == 0)
-			; // do nothing
+		while (sem_trywait(_semaphoreIn) == 0) ; // do nothing
+		while (sem_trywait(_semaphoreOut) == 0); // do nothing
 
 	}
 #elif defined _WIN32

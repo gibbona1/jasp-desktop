@@ -6,12 +6,14 @@
 #include <io.h>
 #endif
 
-logType		Log::_where			= logType::cout;
-std::string	Log::_logFilePath	= "";
-logError	Log::_logError		= logError::noProblem;
-int			Log::_stdoutfd		= -1;
+std::string Log::logFileNameBase	= "";
 
-logType		Log::_default		=
+logType		Log::_where				= logType::cout;
+std::string	Log::_logFilePath		= "";
+logError	Log::_logError			= logError::noProblem;
+int			Log::_stdoutfd			= -1;
+
+logType		Log::_default			=
 #ifdef JASP_DEBUG
 	logType::cout;
 #else
@@ -41,16 +43,19 @@ void Log::setDefaultDestination(logType newDestination)
 		redirectStdOut();
 }
 
-void Log::setLoggingToFile(bool logToFile)
+void Log::setWhere(logType where)
 {
-	logType where = logToFile ? logType::file : _default;
-
 	if(where == _where)
 		return;
 
 	_where = where;
 
 	redirectStdOut();
+}
+
+void Log::setLoggingToFile(bool logToFile)
+{
+	setWhere(logToFile ? logType::file : _default);
 }
 
 void Log::setLogFileName(const std::string & filePath)
@@ -121,4 +126,24 @@ void Log::redirectStdOut()
 	}
 
 	_logError = logError::noProblem;
+}
+
+Json::Value	Log::createLogCfgMsg()
+{
+	Json::Value json	= Json::objectValue;
+
+	json["logBase"]		= logFileNameBase;
+	json["where"]		= logTypeToString(_where);
+
+	return json;
+}
+
+void Log::parseLogCfgMsg(const Json::Value & json, const std::string & filePathExtension)
+{
+	logFileNameBase		= json.get("logBase", logFileNameBase).asString();
+
+	if(_logFilePath == "")
+		setLogFileName(logFileNameBase + filePathExtension);
+
+	setWhere(logTypeFromString(json["where"].asString()));
 }

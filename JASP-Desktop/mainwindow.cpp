@@ -99,18 +99,19 @@ MainWindow::MainWindow(QApplication * application) : QObject(application), _appl
 
 
 	_preferences			= new PreferencesModel(this);
-	initLog();
+	_package				= new DataSetPackage();
+	_dynamicModules			= new DynamicModules(this);
+	_analyses				= new Analyses(this, _dynamicModules);
+	_engineSync				= new EngineSync(_analyses, _package, _dynamicModules, this);
+
+	initLog(); //initLog needs _preferences and _engineSync!
 
 	_resultsJsInterface		= new ResultsJsInterface();
-	_package				= new DataSetPackage();
 	_odm					= new OnlineDataManager(this);
 	_tableModel				= new DataSetTableModel();
 	_levelsTableModel		= new LevelsTableModel(this);
 	_labelFilterGenerator	= new labelFilterGenerator(_package, this);
 	_columnsModel			= new ColumnsModel(this);
-	_dynamicModules			= new DynamicModules(this);
-	_analyses				= new Analyses(this, _dynamicModules);
-	_engineSync				= new EngineSync(_analyses, _package, _dynamicModules, this);
 	_computedColumnsModel	= new ComputedColumnsModel(_analyses, this);
 	_filterModel			= new FilterModel(_package, this);
 	_ribbonModel			= new RibbonModel(_dynamicModules,
@@ -328,13 +329,17 @@ void MainWindow::loadQML()
 
 void MainWindow::initLog()
 {
+	assert(_engineSync != nullptr && _preferences != nullptr);
+
+	Log::logFileNameBase = (AppDirs::logDir() + "JASP "  + getSortableTimestamp()).toStdString();
 	Log::initRedirects();
-	Log::setLogFileName((AppDirs::logDir() + "JASP "  + getSortableTimestamp() + ".log").toStdString());
+	Log::setLogFileName(Log::logFileNameBase + " Desktop.log");
 	Log::setLoggingToFile(_preferences->logToFile());
 	logRemoveSuperfluousFiles(_preferences->logFilesMax());
 
-	connect(_preferences, &PreferencesModel::logToFileChanged,		this, &MainWindow::logToFileChanged); //Not connecting preferences directly to keep Log Qt-free (for Engine/R-Interface)
-	connect(_preferences, &PreferencesModel::logFilesMaxChanged,	this, &MainWindow::logRemoveSuperfluousFiles);
+	connect(_preferences, &PreferencesModel::logToFileChanged,		this,			&MainWindow::logToFileChanged									); //Not connecting preferences directly to Log to keep it Qt-free (for Engine/R-Interface)
+	connect(_preferences, &PreferencesModel::logToFileChanged,		_engineSync,	&EngineSync::logToFileChanged,			Qt::QueuedConnection	);
+	connect(_preferences, &PreferencesModel::logFilesMaxChanged,	this,			&MainWindow::logRemoveSuperfluousFiles							);
 }
 
 void MainWindow::logToFileChanged(bool logToFile)

@@ -58,9 +58,12 @@ public:
 	void processEnginePausedReply();
 	void processEngineStoppedReply();
 	void processEngineResumedReply();
+	void processLogCfgReply();
 
+	void sendLogInit();
+	void sendLogCfg();
 
-	int channelNumber()								{ return _channel->channelNumber(); }
+	size_t channelNumber()								{ return _channel->channelNumber(); }
 
 
 	void sendString(std::string str)
@@ -96,6 +99,8 @@ signals:
 	void moduleLoadingFailed(			const QString & moduleName, const QString & errorMessage, int channelID);
 	void moduleUnloadingFinished(		const QString & moduleName, int channelID);
 	void moduleUninstallingFinished(	const QString & moduleName);
+
+	void logCfgReplyReceived(int channelNr);
 
 private:
 	void sendPauseEngine();

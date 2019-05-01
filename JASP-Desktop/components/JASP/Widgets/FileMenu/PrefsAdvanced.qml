@@ -286,7 +286,7 @@ Item {
 					id:					maxLogFilesSpinBox
 					value:				preferencesModel.logFilesMax
 					onValueChanged:		preferencesModel.logFilesMax = value
-					from:				1
+					from:				5 //Less than 5 makes no sense as on release you get 1 for JASP-Desktop and 4 from the Engines
 					to:					100
 					stepSize:			1
 					font:				Theme.font

@@ -3,6 +3,7 @@
 
 #include <string>
 #include "enumutilities.h"
+#include "jsonredirect.h"
 
 DECLARE_ENUM(logType,  cout, file, null);
 DECLARE_ENUM(logError, noProblem, fileNotOpen, filePathNotSet);
@@ -10,10 +11,21 @@ DECLARE_ENUM(logError, noProblem, fileNotOpen, filePathNotSet);
 class Log
 {
 public:
-	static void setDefaultDestination(logType newDestination);
-	static void setLoggingToFile(bool logToFile);
-	static void setLogFileName(const std::string & filePath);
-	static void initRedirects();
+	static std::string	logFileNameBase;
+
+	static void			initRedirects();
+	static void			setLogFileName(const std::string & filePath);
+
+	static void			setDefaultDestination(logType newDestination);
+
+	static void			setLoggingToFile(bool logToFile);
+	static void			setWhere(logType where);
+
+	static Json::Value	createLogCfgMsg();
+	static void			parseLogCfgMsg(const Json::Value & json, const std::string & logFilePathExtension);
+
+	static bool			needsFileName() { return _logFilePath == ""; }
+
 
 private:
 				Log() { }
