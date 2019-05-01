@@ -22,10 +22,9 @@ public:
 	static void			setWhere(logType where);
 
 	static Json::Value	createLogCfgMsg();
-	static void			parseLogCfgMsg(const Json::Value & json, const std::string & logFilePathExtension);
+	static void			parseLogCfgMsg(const Json::Value & json);
 
-	static bool			needsFileName() { return _logFilePath == ""; }
-
+	static std::string	whereStr() { return logTypeToString(_where); }
 
 private:
 				Log() { }

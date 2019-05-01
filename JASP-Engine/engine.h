@@ -31,7 +31,7 @@
 class Engine
 {
 public:
-	explicit Engine(int slaveNo, unsigned long parentPID);
+	explicit Engine(int slaveNo, unsigned long parentPID, std::string logFileBaseName, std::string logFileWhere);
 	static Engine * theEngine() { return _EngineInstance; } //There is only ever one engine in a process so we might as well have a static pointer to it.
 	~Engine();
 

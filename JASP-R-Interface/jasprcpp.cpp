@@ -55,10 +55,10 @@ void STDCALL jaspRCPP_init(const char* buildYear, const char* version, RBridgeCa
 {
 	rinside = new RInside();
 
-#ifndef _WIN32
+/*#ifndef WIN32
 	rinside_consoleLog = new RInside_ConsoleLogging();
 	rinside->set_callbacks(rinside_consoleLog);
-#endif
+#endif*/
 
 	RInside &rInside = rinside->instance();
 

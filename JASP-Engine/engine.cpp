@@ -53,7 +53,8 @@ bool PollMessagesFunctionForJaspResults()
 
 Engine * Engine::_EngineInstance = NULL;
 
-Engine::Engine(int slaveNo, unsigned long parentPID) : _slaveNo(slaveNo), _parentPID(parentPID)
+Engine::Engine(int slaveNo, unsigned long parentPID, std::string logFileBaseName, std::string logFileWhere)
+	: _slaveNo(slaveNo), _parentPID(parentPID)
 {
 	JASPTIMER_START(Engine Constructor);
 	assert(_EngineInstance == NULL);
@@ -75,15 +76,17 @@ Engine::Engine(int slaveNo, unsigned long parentPID) : _slaveNo(slaveNo), _paren
 
 	rbridge_setGetDataSetRowCountSource( boost::bind(&Engine::dataSetRowCount, this));
 
+	Log::logFileNameBase = logFileBaseName;
 	Log::initRedirects();
-
-	//usleep(10000000);
 
 	JASPTIMER_STOP(Engine Constructor);
 
 	JASPTIMER_START(rbridge_init);
 	rbridge_init(SendFunctionForJaspresults, PollMessagesFunctionForJaspResults);
 	JASPTIMER_STOP(rbridge_init);
+
+	Log::setLogFileName(logFileBaseName + " Engine " + std::to_string(slaveNo) + ".log");
+	Log::setWhere(logTypeFromString(logFileWhere));
 }
 
 Engine::~Engine()
@@ -777,8 +780,7 @@ void Engine::receiveLogCfg(const Json::Value & jsonRequest)
 	std::cout << "Log Config received" << std::endl;
 #endif
 
-	static std::string endOfTheLine = " Engine " + std::to_string(_channel->channelNumber()) + ".log";
-	Log::parseLogCfgMsg(jsonRequest, endOfTheLine);
+	Log::parseLogCfgMsg(jsonRequest);
 
 	Json::Value logCfgResponse		= Json::objectValue;
 	logCfgResponse["typeRequest"]	= engineStateToString(engineState::logCfg);

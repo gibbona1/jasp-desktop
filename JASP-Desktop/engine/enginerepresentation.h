@@ -60,7 +60,6 @@ public:
 	void processEngineResumedReply();
 	void processLogCfgReply();
 
-	void sendLogInit();
 	void sendLogCfg();
 
 	size_t channelNumber()								{ return _channel->channelNumber(); }

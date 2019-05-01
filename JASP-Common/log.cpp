@@ -132,18 +132,12 @@ Json::Value	Log::createLogCfgMsg()
 {
 	Json::Value json	= Json::objectValue;
 
-	json["logBase"]		= logFileNameBase;
 	json["where"]		= logTypeToString(_where);
 
 	return json;
 }
 
-void Log::parseLogCfgMsg(const Json::Value & json, const std::string & filePathExtension)
+void Log::parseLogCfgMsg(const Json::Value & json)
 {
-	logFileNameBase		= json.get("logBase", logFileNameBase).asString();
-
-	if(_logFilePath == "")
-		setLogFileName(logFileNameBase + filePathExtension);
-
 	setWhere(logTypeFromString(json["where"].asString()));
 }

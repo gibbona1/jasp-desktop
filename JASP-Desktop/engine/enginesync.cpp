@@ -294,7 +294,7 @@ QProcess * EngineSync::startSlaveProcess(int no)
 	QString engineExe		= QFileInfo( QCoreApplication::applicationFilePath() ).absoluteDir().absoluteFilePath("JASPEngine");
 
 	QStringList args;
-	args << QString::number(no) << QString::number(ProcessInfo::currentPID());
+	args << QString::number(no) << QString::number(ProcessInfo::currentPID()) << QString::fromStdString(Log::logFileNameBase) << QString::fromStdString(Log::whereStr());
 
 	env.insert("TMPDIR", tq(TempFiles::createTmpFolder()));
 

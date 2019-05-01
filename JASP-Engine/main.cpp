@@ -41,10 +41,12 @@ void openConsoleOutput(unsigned long slaveNo, unsigned parentPID)
 
 int main(int argc, char *argv[])
 {
-	if(argc > 2)
+	if(argc > 4)
 	{
-		unsigned long slaveNo	= strtoul(argv[1], NULL, 10);
-		unsigned long parentPID = strtoul(argv[2], NULL, 10);
+		unsigned long	slaveNo			= strtoul(argv[1], NULL, 10),
+						parentPID		= strtoul(argv[2], NULL, 10);
+		std::string		logFileBase		= argv[3],
+						logFileWhere	= argv[4];
 
 #ifdef _WIN32
 		//openConsoleOutput(slaveNo, parentPID); //uncomment to have a console window open per Engine that shows you std out and cerr. (On windows only, on unixes you can just run JASP from a terminal)
@@ -52,8 +54,10 @@ int main(int argc, char *argv[])
 
 		std::cout << "jaspEngine started and has slaveNo " << slaveNo << " and it's parent PID is " << parentPID << std::endl;
 
+		//usleep(6000000);
+
 		JASPTIMER_START(Engine Starting);
-		Engine e(slaveNo, parentPID);
+		Engine e(slaveNo, parentPID, logFileBase, logFileWhere);
 		e.run();
 
 		JASPTIMER_PRINTALL();

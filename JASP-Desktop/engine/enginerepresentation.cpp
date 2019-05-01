@@ -431,10 +431,7 @@ void EngineRepresentation::processEngineResumedReply()
 	if(_engineState != engineState::resuming && _engineState != engineState::initializing)
 		throw std::runtime_error("Received an unexpected engine resumed reply!");
 
-	if(_engineState == engineState::initializing)
-		sendLogInit();
-	else
-		_engineState = engineState::idle;
+	_engineState = engineState::idle;
 }
 
 void EngineRepresentation::processEngineStoppedReply()
@@ -504,22 +501,6 @@ void  EngineRepresentation::rerunRunningAnalysis()
 {
 	if(_engineState == engineState::analysis && _analysisInProgress != nullptr)
 		_analysisInProgress->refresh();
-}
-
-void EngineRepresentation::sendLogInit()
-{
-#ifdef JASP_DEBUG
-	std::cout << "EngineRepresentation::sendLogInit()" << std::endl;
-#endif
-
-	if(_engineState != engineState::initializing)
-		throw std::runtime_error("EngineRepresentation::sendLogInit() expects to be run from an engine that is intializing!");
-
-	_engineState		= engineState::logCfg;
-	Json::Value msg		= Log::createLogCfgMsg();
-	msg["typeRequest"]	= engineStateToString(_engineState);
-
-	sendString(msg.toStyledString());
 }
 
 void EngineRepresentation::sendLogCfg()
