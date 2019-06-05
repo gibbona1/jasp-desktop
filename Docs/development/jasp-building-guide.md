@@ -8,7 +8,7 @@ For those unfamiliar with using Qt Creator for development, there is some excell
 
 Alternatively, those that are more comfortable using command line tools can use *QMake*, the manual for which is available [here](http://doc.qt.io/qt-5/qmake-manual.html). *QMake* projects (like JASP) are typically built in two steps; first *QMake* is called, which generates a Makefile for *Make*, and then *Make* is called with this generated Makefile.
 
-We recommend building JASP in a separate directory to it's source directory. This can be achieved by calling *QMake* in a separate directory to the source, for example we might create a separate directory beside the *jasp-desktop* directory (perhaps called *jasp-build*), and then from this directory call:
+We recommend building JASP in a separate directory to its source directory. This can be achieved by calling *QMake* in a separate directory to the source, for example we might create a separate directory beside the *jasp-desktop* directory (perhaps called *jasp-build*), and then from this directory call:
 
     qmake ../jasp-desktop/JASP.pro
     make # -j8 # <- to gain a considerable speedup on a typical quadcore system
@@ -19,7 +19,7 @@ JASP requires several dependencies which are documented below.
 
 JASP depends on:
 
- - [Qt (5.11 + QtWebEngine)](http://qt-project.org)
+ - [Qt (5.12 + QtWebEngine)](http://qt-project.org)
  - [R](http://cran.r-project.org)
  - [boost](http://boost.org)
  - [libarchive](http://libarchive.org/)
@@ -28,7 +28,7 @@ JASP depends on:
 Required files on Windows and Mac OS X
 --------------
 To be able to build JASP the listed dependencies are required and can be easily installed on your system through [jasp-required-files](https://github.com/jasp-stats/jasp-required-files.git)
-Simply clone the git repository next to your jasp-desktop folder as follows:
+Simply clone the git repository next to your **jasp-desktop** folder as follows:
 
 	[+] jasp-desktop < from github >
 	[+] jasp-required-files < from github >
@@ -44,10 +44,10 @@ Building JASP under windows is the most temperamental but should pose no large p
 
 Besides installing and cloning the software above one needs to make some kits in Qt Creator to be able to build JASP and separately JASP-R-Interface. 
 
-Assume that the root folder of your JASP build folder is <JASP>.
+Assume that the root folder of your JASP build folder is \<JASP\>.
 To build JASP follow the next steps:
 	
-1. Clone JASP sources from the jasp-desktop github repository.
+1. Clone JASP sources from the **jasp-desktop** github repository.
 	From <JASP> root folder in a terminal type:
 	
 	\> git clone https://github.com/jasp-stats/jasp-desktop.git
@@ -59,19 +59,22 @@ To build JASP follow the next steps:
 	You should now have:  
 	\<JASP\>\jasp-desktop
 	
-2. Clone some third party binaries, boost and used R-packages  from jasp-required-files repository on GitHub. 
+2. Clone some third party binaries, boost and used R-packages  from **jasp-required-files** repository on GitHub.  
+        This uses the same method as in step 1.
 	From \<JASP\> root folder in a terminal type:
 	
 	\> git clone https://github.com/jasp-stats/jasp-required-files.git
 	
+	Or from a browser go to https://github.com/jasp-stats/jasp-required-files and choose the Clone or Download option.  
+	
 	You should now have:  
 	\<JASP\>\jasp-required-files
 	
-3. Switch to the Windows branch in jasp-required-files. From \<JASP\> root folder in a terminal type:
+3. Switch to the Windows branch in **jasp-required-files**. From \<JASP\> root folder in a terminal type:
 	
 	Warning in advance:  
-Because the jasp-required-files folder contains binary files as well as R packages with text files it is necessary that git performs a checkout or commit without changing the line endings. Some packages might generate MD5 checksum errors if line endings are changed. It is possible to change this behavior of git configuration per repository. For more information on this subject see https://help.github.com/articles/dealing-with-line-endings/  
-(To use a repostory specific setting for this : in the jasp-required-files folder type: \>git config core.autocrlf false)
+Because the **jasp-required-files** folder contains binary files as well as R packages with text files it is necessary that git performs a checkout or commit without changing the line endings. Some packages might generate MD5 checksum errors if line endings are changed. It is possible to change this behavior of git configuration per repository. For more information on this subject see https://help.github.com/articles/dealing-with-line-endings/  
+(To use a repostory specific setting for this : in the **jasp-required-files** folder type: \>git config core.autocrlf false)
 
 	\> cd \<JASP\>\jasp-required-files  
 	\> git checkout Windows  
@@ -85,18 +88,18 @@ Because the jasp-required-files folder contains binary files as well as R packag
 	\> mkdir build-release-64  
 	\> mkdir build-debug-64  
 	
-	Latter if you want to build a debug version. In the description it is assumed that you build a release version. 
+	Later you may want to build a debug version. In the description it is assumed that you are only building a release version. 
 	You should now have:  
 
 	 \<JASP\>\build-release-64  
 	 \<JASP\>\build-debug-64  
 	
-	The destinction between debug version and release only differs in the option you choose in QtCreator. Olnly the description for the release version is given.
+	The destinction between debug version and release only differs in the option you choose in QtCreator. Only the description for the release version is given.
 	 
 5.	Copy files to its expected location in the build folders:    
 	From \<JASP\>\jasp-required-files\64\\* -> \<JASP\>\build-release-64  
-	From \<JASP\>\jasp-required-files\R -> \<JASP\>\build-release-64\R  
-	From \<JASP\>\jasp-required-files\boost_1_64_0 -> <JASP>\boost_1_64_0  
+	From \<JASP\>\jasp-required-files\R     -> \<JASP\>\build-release-64\R  
+	From \<JASP\>\jasp-required-files\boost_1_64_0 -> \<JASP\>\boost_1_64_0  
 	
 	P.S. Instead of copying the files it is preferred to generate a symbolic link to the R and boost folder. From the buildfolder or Jasp root folder:  
 	\> cd <JASP>\build-release-64  
@@ -110,7 +113,7 @@ Because the jasp-required-files folder contains binary files as well as R packag
 	\<JASP\>\build-release-64\*.lib and *.dll    
 	\<JASP\>\boost_1_64_0  
 
-6.	Install Qt 5.12  
+6.	**Install Qt 5.12**  
 	Go to https://www.qt.io/download  
 	Choose Open Source and Download.  
 	Start qt-unified-windows-x86-3.0.6-online.exe from your download folder.  
@@ -124,23 +127,23 @@ You will now have QtCreator in \<QTINSTALLDIR\>\Tools\QtCreator\bin\qtcreator.ex
 For following updates of Qt you can use the MaintenanceTool for Qt in \<QTINSTALLDIR\>\MaintenanceTool.exe (and in your start menu).  
 
 
-7. Install Microsoft Visual Studio 2017 (not 2019)
+7. **Install Microsoft Visual Studio 2017** (not 2019)  
 	Go to https://www.visualstudio.com/downloads/  
-	Download Community version
+	Download Community version.
 	Start vs_community_.. from your download folder.  
-	Choose all the default options.	 
+	Choose all the default options.  
 	For components to install only choose the Desktop development with C++ option:  
 	
 ![Image of Qt Installer](https://static.jasp-stats.org/images/Visual-Studio-Options.png)  
 	
-8. Install RTools 3.5  
+8. **Install RTools 3.5**  
 	Download from https://cran.r-project.org/bin/windows/Rtools/Rtools35.exe  
 	Start RTools35 from your download folder.  
 	Choose the default options.  
 
 	You will now have RTools 3.5 installed in C:\RTools  
 
-9.	The last steps you have to do is configuring QtCreator with the proper kits to build JASP.    
+9.	The last steps you have to do is **configuring QtCreator** with the proper kits to build JASP.    
 	Start QtCreator and load, through File->Open File or Project, the JASP.pro file from <JASP>\jasp-desktop\JASP.pro.  
 	Also load <JASP>\jasp-desktop\JASP-R-Interface\JASP-R-Interface.pro.  
 	Both projects are built with a different kit in Qt because they are built with different compilers.  
@@ -149,11 +152,11 @@ For following updates of Qt you can use the MaintenanceTool for Qt in \<QTINSTAL
 
 ![Image of Qt Installer](https://static.jasp-stats.org/images/Compilers.png)    
 
-	The Debuggers tab should now be similar to:  
+The Debuggers tab should now be similar to:  
 	
 ![Image of Qt Installer](https://static.jasp-stats.org/images/Debuggers.png)   	
 
-You should now create two kits, one for building JASP desktop and one for building JASP-R-Interface. Both are equal except for the Compiler versions. The kits should look similar to:
+You should now create two kits, one for building JASP and one for building JASP-R-Interface. Both are equal except for the Compiler versions. The kits should look similar to:
 
 ![Image of Qt Installer](https://static.jasp-stats.org/images/MSVC-Kit.png)   
 
@@ -161,18 +164,18 @@ And
 
 ![Image of Qt Installer](https://static.jasp-stats.org/images/MINGW-Kit.png) 
 
-Your deployment configuration should now show something like:  
+Your deployment configuration (in the side panel) should now show something like:  
 
 ![Image of Qt Installer](https://static.jasp-stats.org/images/JASP-Configuration.png)   
 ![Image of Qt Installer](https://static.jasp-stats.org/images/JASP-R-Interface-Configuration.png)   
   
   
-10. From the Projects Options in the side panel check if your build folders are correct.
+10. From the **Projects** option in the side panel, check if your build folders are correct:
   
   
 ![Image of Qt Installer](https://static.jasp-stats.org/images/BuildDir.png)  
 
-For the JASP-R-Interface the Build directory should be build-release-64\JASP-R-Interface.
+For the JASP-R-Interface the Build directory should be build-release-64\JASP-R-Interface. This JASP-R-Interface folder needs to be created manually.
  
 11. Start building the JASP-R-Interface first, you will need this to finish the JASP build properly.
 
